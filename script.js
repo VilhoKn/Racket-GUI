@@ -10,21 +10,15 @@ const createCode = () => {
     for (i of currentSave.var) {
         code += `(define ${i.name} (square koko "solid" (make-color ${i.rgb})))\n`
     }
-    let rowText = ""
+    let rowText = "\n"
     let pixelText = ""
-    console.log(pixelText, "pixelText1")
     for (let i = 0; i < currentSave.data.length; i++) {
-        console.log(pixelText, "pixelText2")
-        if (i > 0) {
-			rowText += `(define R${i} (beside ${pixelText}))\n`
-        }
         pixelText = ""
         for (let j = 0; j < currentSave.data[i].length; j++) {
-            console.log(pixelText, "pixelText3")
             const pixelName = currentSave.var.find(x => x.rgb == currentSave.data[i][j].join(" ")).name
-            console.log(pixelName)
             pixelText += `${pixelName} `
         }
+        rowText += `(define R${i+1} (beside ${pixelText}))\n`
     }
     code += rowText+"\n"
     code += "\n(above "
@@ -72,8 +66,13 @@ const refreshInputs = () => {
     document.querySelector("#size").value = currentSave.size
     document.querySelector("#outline").value = currentSave.outline
 
-    document.querySelector("#size").addEventListener('change', () => {currentSave.size = parseInt(document.querySelector("#size").value); refreshGrid()})
-    document.querySelector("#outline").addEventListener('change', () => {currentSave.outline = parseInt(document.querySelector("#outline").value); refreshGrid()})
+    document.querySelector("#size").addEventListener('change', () => {currentSave.size = parseInt(document.querySelector("#size").value); console.log(currentSave.size); document.querySelectorAll(".pixel").forEach(i => {
+        i.style.width = `${currentSave.size}px`
+        i.style.height = `${currentSave.size}px`
+    });})
+    document.querySelector("#outline").addEventListener('change', () => {currentSave.outline = parseInt(document.querySelector("#outline").value); document.querySelectorAll(".pixel").forEach(i => {
+        i.style.border = `${currentSave.outline}px solid #000`
+    });})
 }
 
 const refreshVariables = () => {
@@ -126,6 +125,9 @@ const refreshGrid = () => {
                 refreshGrid()
             })
             pixelEl.classList.add("pixel")
+            pixelEl.style.width = `${currentSave.size}px`
+            pixelEl.style.height = `${currentSave.size}px`
+            pixelEl.style.border = `${currentSave.outline}px solid #000`
             pixelEl.style.background = `rgb(${currentSave.data[i][j].join(",")})`
             rowEl.appendChild(pixelEl)
         }
@@ -140,10 +142,11 @@ const init = () => {
     if(saves.length == 0) {
         saves.push({
             name: "Oletus",
-            size: 15,
+            size: 30,
             outline: 2,
             var: [
                 {name: "M", rgb: "0 0 0"},
+                {name: "V", rgb: "255 255 255"},
             ],
             data: emptyGrid(16, 16, "255 255 255")
         })
@@ -168,8 +171,7 @@ document.querySelector("#save").addEventListener('click', () => {
     if (saves.find(save => save.name == newName)) {
         saves = saves.filter(save => save.name != newName)
     }
-    currentSave.name = newName
-    saves.push(currentSave)
+    saves.push({...currentSave, name: newName})
     localStorage.setItem('saves', JSON.stringify(saves))
     localStorage.setItem('currentName', JSON.stringify(newName))
     init()
@@ -178,6 +180,15 @@ document.querySelector("#save").addEventListener('click', () => {
 document.querySelector("#load").addEventListener('click', () => {
     if (choice == "") return
     localStorage.setItem('currentName', JSON.stringify(choice))
+    init()
+})
+
+document.querySelector("#delete").addEventListener('click', () => {
+    if (choice == "") return
+    saves = saves.filter(save => save.name != choice)
+    localStorage.setItem('saves', JSON.stringify(saves))
+    localStorage.setItem('currentName', JSON.stringify(saves[0].name))
+    choice = saves[0].name
     init()
 })
 

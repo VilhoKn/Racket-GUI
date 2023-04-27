@@ -8,24 +8,25 @@
     <title>Racket GUI</title>
 </head>
 <body>
-    <h1>Racket GUI</h1>
     <div class="code">
-        <textarea name="code" id="code" cols="30" rows="10"></textarea>
+        <textarea name="code" id="code" cols="160" rows="28"></textarea>
         <button type="button" id="close">Sulje</button>
     </div>
     <section class="main">
         <div class="options">
+            <h1>Racket GUI</h1>
             <div class="save-section">
                 <input type="text" id="name" placeholder="Nimi">
                 <div class="saves"></div>
                 <div class="buttons">
                     <button type="button" id="save">Tallenna</button>
                     <button type="button" id="load">Lataa</button>
+                    <button type="button" id="delete">Poista</button>
                 </div>
             </div>
             <div class="size">
-                <input type="number" id="size" placeholder="Koko" value="15">
-                <input type="number" id="outline" placeholder="Reunus" value="5">
+                <input type="range" min="1" max="50" value="30" class="slider" id="size">
+                <input type="range" min="0" max="10" value="2" class="slider" id="outline">
             </div>
             <div class="variables">
                 <div class="variable-container"></div>
@@ -33,19 +34,28 @@
             </div>
             <div class="fills">
                 <div class="fill-inputs">
-                    <input type="text" id="height" placeholder="Korkeus" value="16">
-                    <input type="text" id="width" placeholder="Leveys" value="16">
-                    <input type="text" id="color" placeholder="Väri" value="255 255 255">              
+                    <input type="text" id="height" class="fill-input" placeholder="Korkeus" value="16">
+                    <input type="text" id="width" class="fill-input" placeholder="Leveys" value="16">
+                    <input type="text" id="color" class="fill-input" placeholder="Väri" value="255 255 255">    
+                      
                 </div>
-                <button id="fill">Täytä</button>
+                
             </div>
+            <button id="fill">Täytä</button>  
             <div class="show-code">
                 <button type="button" id="show">Näytä koodi</button>
             </div>
         </div>
-        <div class="grid-container">
+        <div class="grid">
+            <div class="wrap">
+                <div class="grid-container">
+
+                </div>
+            </div>
+            
 
         </div>
+        
     </section>
     
     <script src="script.js"></script>
