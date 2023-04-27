@@ -5,10 +5,15 @@
 }
 
 
+.code {
+    display: none;
+}
+
 .pixel {
 	width: 30px;
 	height: 30px;
     border: 1px solid #000;
+    cursor: pointer;
 }
 
 .row {
@@ -18,5 +23,17 @@
 .grid-container {
 	display: flex;
 	flex-direction: column;
-    cursor: pointer;
+}
+
+.var-input {
+    width: 100px;
+    height: 30px;
+    margin: 10px;
+}
+
+.var-preview {
+    width: 100px;
+    height: 30px;
+    margin: 10px;
+    border: 1px solid #000;
 }
