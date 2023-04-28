@@ -353,6 +353,7 @@ document.querySelector("#delete").addEventListener('click', () => {
 
 document.querySelector("#add-variable").addEventListener('click', () => {
     currentSave.var.push({name: `V${Math.floor(Math.random() * 100)}`, rgb: "0 0 0"})
+    color = currentSave.var.length - 1
     refreshVariables()
 })
 
