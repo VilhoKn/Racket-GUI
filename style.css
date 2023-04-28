@@ -315,6 +315,13 @@ h1 {
     cursor: pointer;
 }
 
+.var-name {
+    width: 40px;
+}
+
+.var-rgb {
+    width: 100px;
+}
 
 #show {
     border: none;
