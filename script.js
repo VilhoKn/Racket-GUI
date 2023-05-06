@@ -192,7 +192,12 @@ const checkCode = () => {
 const createCode = () => {
     const varMatch = checkCode()
     if (varMatch.length > 0) {
-        alert(`Seuraaville väreille ei löydy muuttujia:\n${varMatch.join(", ")}`)
+        let temp = ""
+        for (i of varMatch) {
+            const colorValue = getRgbName(i) ? `: ${getRgbName(i)}` : ""
+            temp += `${i}${colorValue}\n`
+        }
+        alert(`Seuraaville väreille ei löydy muuttujia:\n${temp}`)
         return
     }
     let code = ""
@@ -292,7 +297,18 @@ const refreshVariables = () => {
         preview.style.backgroundColor = `rgb(${rgbList.join(",")})`
 
         name.addEventListener('change', () => {currentSave.var[i].name = name.value; refreshVariables()})
-        rgb.addEventListener('change', () => {currentSave.var[i].rgb = getRgbValue(rgb.value) ? getRgbValue(rgb.value) : rgb.value; refreshVariables()})
+        rgb.addEventListener('change', () => {
+            let colorValue = rgb.value
+            if (getRgbValue(rgb.value)) {
+                colorValue = getRgbValue(rgb.value)
+            }
+            if (validRgb(colorValue)) {
+                currentSave.var[i].rgb = colorValue
+            } else {
+                alert("Virheellinen RGB-arvo")
+            }
+            refreshVariables()
+        })
         preview.addEventListener('click', () => {color = i; refreshVariables()})
 
         const deleteButton = document.createElement("button")
