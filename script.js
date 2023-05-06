@@ -296,7 +296,7 @@ const refreshVariables = () => {
         const rgbList = rgbTemp.split(" ")
         preview.style.backgroundColor = `rgb(${rgbList.join(",")})`
 
-        name.addEventListener('change', () => {currentSave.var[i].name = name.value; refreshVariables()})
+        name.addEventListener('change', () => {currentSave.var[i].name = name.value})
         rgb.addEventListener('change', () => {
             let colorValue = rgb.value
             if (getRgbValue(rgb.value)) {
@@ -307,7 +307,6 @@ const refreshVariables = () => {
             } else {
                 alert("Virheellinen RGB-arvo")
             }
-            refreshVariables()
         })
         preview.addEventListener('click', () => {color = i; refreshVariables()})
 
@@ -315,7 +314,6 @@ const refreshVariables = () => {
         deleteButton.classList.add("delete")
         deleteButton.innerText = "X"
         deleteButton.addEventListener('click', () => {
-
             currentSave.var.splice(i, 1)
             refreshVariables()
         })
@@ -340,8 +338,7 @@ const refreshGrid = () => {
                 const rgb = currentSave.var[color].rgb
                 if (validRgb(rgb)) {
                     currentSave.data[i][j] = currentSave.var[color].rgb.split(" ")
-                    pixelEl.style.background = `rgb(${currentSave.var[color].rgb.replace(" ", ",")})`
-                    refreshGrid()
+                    pixelEl.style.background = `rgb(${currentSave.var[color].rgb.split(" ").join(",")})`
                 } else {
                     alert("Virheellinen RGB-arvo")
                 }
