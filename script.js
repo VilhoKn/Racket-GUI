@@ -155,23 +155,59 @@ const colorDict = {
 };
   
 
-const getRgb = (s) => {
+const getRgbValue = (s) => {
     const temp = s.toLowerCase().replace(" ", "")
     return Object.keys(colorDict).includes(temp) ? colorDict[temp] : false
 }
 
+const getRgbName = (s) => {
+    const colorIndex = Object.values(colorDict).indexOf(s)
+    return colorIndex != -1 ? Object.keys(colorDict)[colorIndex] : false
+}
+
+const validRgb = (s) => {
+    const temp = s.split(" ")
+    if (temp.length != 3) return false
+    for (i of temp) {
+        if (isNaN(i) || i < 0 || i > 255) return false
+    }
+    return true
+}
+
+const checkCode = () => {
+    let noMatch = []
+    for (let i = 0; i < currentSave.data.length; i++) {
+        for (let j = 0; j < currentSave.data[i].length; j++) {
+            let matches = false
+            const colorValue = currentSave.data[i][j].length == 1 ? currentSave.data[i][j].split(",").join(" ") : currentSave.data[i][j].join(" ")
+            for (let k = 0; k < currentSave.var.length; k++) {
+                matches = matches || (currentSave.var[k].rgb == colorValue)
+            }
+            if (!matches) noMatch.push(currentSave.var[k].rgb)
+        }
+    }
+    return noMatch
+}
+
 const createCode = () => {
+    const varMatch = checkCode()
+    if (varMatch.length > 0) {
+        alert(`Seuraaville väreille ei löydy muuttujia:\n${varMatch.join(", ")}`)
+        return
+    }
     let code = ""
     code += `(define koko ${currentSave.size})\n`
     for (i of currentSave.var) {
-        code += `(define ${i.name} (square koko "solid" (make-color ${i.rgb})))\n`
+        const colorValue = getRgbName(i.rgb) ? `"${getRgbName(i.rgb)}"` : `(make-color ${i.rgb})`
+        code += `(define ${i.name} (square koko "solid" ${colorValue}))\n`
     }
     let rowText = "\n"
     let pixelText = ""
     for (let i = 0; i < currentSave.data.length; i++) {
         pixelText = ""
         for (let j = 0; j < currentSave.data[i].length; j++) {
-            const pixelName = currentSave.var.find(x => x.rgb == currentSave.data[i][j].join(" ")).name
+            const findStr = currentSave.data[i][j].length == 1 ? currentSave.data[i][j][0].split(",").join(" ") : currentSave.data[i][j].join(" ")
+            const pixelName = currentSave.var.find(x => x.rgb == findStr).name
             pixelText += `${pixelName} `
         }
         rowText += `(define R${i+1} (beside ${pixelText}))\n`
@@ -253,13 +289,17 @@ const refreshVariables = () => {
         preview.style.backgroundColor = `rgb(${rgbList.join(",")})`
 
         name.addEventListener('change', () => {currentSave.var[i].name = name.value; refreshVariables()})
-        rgb.addEventListener('change', () => {currentSave.var[i].rgb = getRgb(rgb.value) ? getRgb(rgb.value) : rgb.value; refreshVariables()})
+        rgb.addEventListener('change', () => {currentSave.var[i].rgb = getRgbValue(rgb.value) ? getRgbValue(rgb.value) : rgb.value; refreshVariables()})
         preview.addEventListener('click', () => {color = i; refreshVariables()})
 
         const deleteButton = document.createElement("button")
         deleteButton.classList.add("delete")
         deleteButton.innerText = "X"
-        deleteButton.addEventListener('click', () => {currentSave.var.splice(i, 1); refreshVariables()})
+        deleteButton.addEventListener('click', () => {
+
+            currentSave.var.splice(i, 1)
+            refreshVariables()
+        })
         
         li.appendChild(preview)
         li.appendChild(name)
@@ -278,9 +318,14 @@ const refreshGrid = () => {
         for (let j = 0; j < currentSave.data[i].length; j++) {
             let pixelEl = document.createElement("div")
             pixelEl.addEventListener("click", () => {
-                currentSave.data[i][j] = currentSave.var[color].rgb.split(" ")
-                pixelEl.style.background = `rgb(${currentSave.var[color].rgb.replace(" ", ",")})`
-                refreshGrid()
+                const rgb = currentSave.var[color].rgb
+                if (validRgb(rgb)) {
+                    currentSave.data[i][j] = currentSave.var[color].rgb.split(" ")
+                    pixelEl.style.background = `rgb(${currentSave.var[color].rgb.replace(" ", ",")})`
+                    refreshGrid()
+                } else {
+                    alert("Virheellinen RGB-arvo")
+                }
             })
             pixelEl.classList.add("pixel")
             pixelEl.style.width = `${currentSave.size}px`
@@ -319,8 +364,14 @@ const init = () => {
 }
 
 document.querySelector("#fill").addEventListener('click', () => {
-    currentSave.data = emptyGrid(document.querySelector("#width").value, document.querySelector("#height").value, getRgb(document.querySelector("#color").value) ? getRgb(document.querySelector("#color").value) : document.querySelector("#color").value)
-    refreshGrid()
+    const colorInput = document.querySelector("#color").value
+    const colorValue = getRgbValue(colorInput) ? getRgbValue(colorInput) : colorInput
+    if (validRgb(colorValue)) {
+        currentSave.data = emptyGrid(document.querySelector("#width").value, document.querySelector("#height").value, colorValue)
+        refreshGrid()
+    } else {
+        alert("Virheellinen RGB-arvo")
+    }
 })
 
 document.querySelector("#save").addEventListener('click', () => {
