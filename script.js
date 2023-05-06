@@ -258,6 +258,9 @@ const refreshInputs = () => {
     document.querySelector("#size").value = currentSave.size
     document.querySelector("#outline").value = currentSave.outline
 
+    document.querySelector("#width").value = currentSave.data.length
+    document.querySelector("#height").value = currentSave.data[0].length
+
     document.querySelector("#size").addEventListener('change', () => {currentSave.size = parseInt(document.querySelector("#size").value); console.log(currentSave.size); document.querySelectorAll(".pixel").forEach(i => {
         i.style.width = `${currentSave.size}px`
         i.style.height = `${currentSave.size}px`
