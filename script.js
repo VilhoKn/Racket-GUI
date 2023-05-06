@@ -422,7 +422,12 @@ document.querySelector("#delete").addEventListener('click', () => {
 })
 
 document.querySelector("#add-variable").addEventListener('click', () => {
-    currentSave.var.push({name: `V${Math.floor(Math.random() * 100)}`, rgb: "0 0 0"})
+    let newName = ""
+    while(1) {
+        newName = `V${Math.floor(Math.random() * 100)}`
+        if (!currentSave.var.find(variable => variable.name == newName)) break
+    }
+    currentSave.var.push({name: newName, rgb: "0 0 0"})
     color = currentSave.var.length - 1
     refreshVariables()
 })
