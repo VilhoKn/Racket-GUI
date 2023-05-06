@@ -179,11 +179,11 @@ const checkCode = () => {
     for (let i = 0; i < currentSave.data.length; i++) {
         for (let j = 0; j < currentSave.data[i].length; j++) {
             let matches = false
-            const colorValue = currentSave.data[i][j].length == 1 ? currentSave.data[i][j].split(",").join(" ") : currentSave.data[i][j].join(" ")
+            const colorValue = currentSave.data[i][j].length == 1 ? currentSave.data[i][j][0].split(",").join(" ") : currentSave.data[i][j].join(" ")
             for (let k = 0; k < currentSave.var.length; k++) {
                 matches = matches || (currentSave.var[k].rgb == colorValue)
             }
-            if (!matches) noMatch.push(currentSave.var[k].rgb)
+            if (!matches && !noMatch.includes(colorValue)) noMatch.push(colorValue)
         }
     }
     return noMatch
